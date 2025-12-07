@@ -12,8 +12,13 @@
 
 # testing
 /coverage
+refer
+homepage.html
 
-# next.js
+product-detail-page.html
+product-listing-page.html
+shopping-cart-screen.html
+# next.jsproduct-listing-page.html
 /.next/
 /out/
 
