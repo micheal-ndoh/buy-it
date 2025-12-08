@@ -1809,6 +1809,7 @@ __metadata:
     lucide-react: "npm:^0.556.0"
     next: "npm:16.0.7"
     next-auth: "npm:^5.0.0-beta.30"
+    next-themes: "npm:^0.4.6"
     prisma: "npm:5"
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
@@ -3860,6 +3861,16 @@ __metadata:
     nodemailer:
       optional: true
   checksum: 10c0/31ce5ff20320a001ab93444f00c9e0afc8112fd4380a5186bf637f48f6bdc616363861d125da934ea4fa5d1044fe5a61adc988e23a886bf6fb4710aa6488405d
+  languageName: node
+  linkType: hard
+
+"next-themes@npm:^0.4.6":
+  version: 0.4.6
+  resolution: "next-themes@npm:0.4.6"
+  peerDependencies:
+    react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+  checksum: 10c0/83590c11d359ce7e4ced14f6ea9dd7a691d5ce6843fe2dc520fc27e29ae1c535118478d03e7f172609c41b1ef1b8da6b8dd2d2acd6cd79cac1abbdbd5b99f2c4
   languageName: node
   linkType: hard
 

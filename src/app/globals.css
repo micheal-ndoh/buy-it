@@ -2,8 +2,13 @@
 
 :root {
   --background: #f8f5f5;
-  --foreground: #171717;
+  --foreground: #0f0f0f;
   --primary: #f20d0d;
+  --text-primary: #0f0f0f;
+  --text-secondary: #1f2937;
+  --text-muted: #374151;
+  --border: #d1d5db;
+  --surface: #ffffff;
 }
 
 @theme inline {
@@ -14,12 +19,71 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #221010;
-    --foreground: #ededed;
-    --primary: #f20d0d;
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --primary: #f20d0d;
+}
+
+/* Loading Spinner */ot
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 4px solid #fff;
+  border-right: 4px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  position: relative;
+}
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border-bottom: 4px solid #ff3d00;
+  border-left: 4px solid transparent;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
   }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading Spinner */
+.loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 4px solid #fff;
+  border-right: 4px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  position: relative;
+}
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border-bottom: 4px solid #ff3d00;
+  border-left: 4px solid transparent;
 }
 
 body {

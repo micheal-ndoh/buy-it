@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Navigation } from "@/components/Navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,11 +20,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className={inter.className}>
         <Providers>
+          <Navigation />
           {children}
+          <ThemeToggle />
         </Providers>
       </body>
     </html>

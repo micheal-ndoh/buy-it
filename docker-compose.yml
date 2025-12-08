@@ -1,8 +1,31 @@
-version: '3.8'
-
 services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: buy-it-app
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:password@postgres:5432/buyit
+      - DIRECT_DATABASE_URL=postgresql://user:password@postgres:5432/buyit
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+    command: sh -c "yarn prisma migrate dev && yarn dev"
+
   postgres:
     image: postgres:16
+    container_name: buy-it-postgres
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -11,22 +34,84 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d buyit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-keycloak:
+    image: postgres:16
+    container_name: buy-it-postgres-keycloak
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0
+    build:
+      context: .
+      dockerfile: keycloak.Dockerfile
+    container_name: buy-it-keycloak
     environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak
+      KC_DB_USERNAME: user
+      KC_DB_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    volumes:
-      - ./realm/buy-it.json:/opt/keycloak/data/import/buy-it.json
-    command: start-dev --import-realm
+      KC_HOSTNAME_STRICT: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_URL: http://localhost:8080
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      postgres-keycloak:
+        condition: service_healthy
+    networks:
+      - app-network
+    command: start
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3                                                                                                                                                                                                                                                                                                                                
+      start_period: 30s
+
+  keycloak-init:
+    image: alpine:3.18
+    container_name: buy-it-keycloak-init
+    depends_on:
+      - keycloak
+    networks:
+      - app-network
+    volumes:
+      - ./scripts/import-realm.sh:/import-realm.sh:ro
+      - ./realm/buy-it.json:/buy-it.json:ro
+    environment:
+      - KEYCLOAK_HOST=keycloak:8080
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    restart: on-failure
+    entrypoint: /bin/sh
+    command: -c "apk add --no-cache curl jq && sh /import-realm.sh /buy-it.json"
 
   tolgee:
     image: tolgee/tolgee:latest
+    container_name: buy-it-tolgee
     environment:
       TOLGEE_AUTHENTICATION_INITIAL_USERNAME: admin
       TOLGEE_AUTHENTICATION_INITIAL_PASSWORD: admin
@@ -36,7 +121,15 @@ services:
     ports:
       - "8085:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+  keycloak_db_data:
+
+networks:
+  app-network:
+    driver: bridge
