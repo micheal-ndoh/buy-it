@@ -48,13 +48,6 @@ export function ProductFilters({
         </Link>
       </div>
       <div className="space-y-6 divide-y divide-border-light dark:divide-border-dark">
-        {/* Search Filter */}
-        <div className="pt-6">
-          <h3 className="text-text-light-primary dark:text-text-dark-primary font-semibold mb-3">
-            Search
-          </h3>
-          <ProductSearch />
-        </div>
         {/* Category Filter */}
         <div>
           <div

@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
+import { ProductSearch } from "./ProductSearch";
 
 export function Navigation() {
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
@@ -22,6 +24,7 @@ export function Navigation() {
           </Link>
 
           <div className="hidden md:flex items-center gap-2 sm:gap-6">
+            <ProductSearch />
             <Link
               href="/products"
               className="text-gray-700 dark:text-gray-300 hover:text-primary font-medium transition-colors"
@@ -62,12 +65,20 @@ export function Navigation() {
             )}
           </div>
 
-          <button
-            className="md:hidden text-gray-700 dark:text-gray-300 hover:text-primary"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <span className="material-symbols-outlined text-2xl">menu</span>
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              className="text-gray-700 dark:text-gray-300 hover:text-primary"
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
+              <span className="material-symbols-outlined text-2xl">search</span>
+            </button>
+            <button
+              className="text-gray-700 dark:text-gray-300 hover:text-primary"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              <span className="material-symbols-outlined text-2xl">menu</span>
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -90,7 +101,9 @@ export function Navigation() {
                   onClick={() => setMenuOpen(false)}
                 >
                   <span className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg">shopping_cart</span>
+                    <span className="material-symbols-outlined text-lg">
+                      shopping_cart
+                    </span>
                     Cart
                   </span>
                 </Link>
@@ -102,7 +115,10 @@ export function Navigation() {
                   Account
                 </Link>
                 <button
-                  onClick={() => { signOut(); setMenuOpen(false); }}
+                  onClick={() => {
+                    signOut();
+                    setMenuOpen(false);
+                  }}
                   className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Sign Out
@@ -110,13 +126,22 @@ export function Navigation() {
               </>
             ) : (
               <button
-                onClick={() => { signIn("keycloak"); setMenuOpen(false); }}
+                onClick={() => {
+                  signIn("keycloak");
+                  setMenuOpen(false);
+                }}
                 className="block w-full text-left px-4 py-2 bg-primary text-white hover:bg-red-700"
               >
                 Sign In
               </button>
             )}
           </div>
+        </div>
+      )}
+
+      {searchOpen && (
+        <div className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-2">
+          <ProductSearch />
         </div>
       )}
     </header>
