@@ -118,6 +118,19 @@ export async function updateProduct(id: string, formData: FormData) {
 
 export async function deleteProduct(id: string) {
   try {
+    // Delete related records first to avoid foreign key constraints
+    await prisma.orderItem.deleteMany({
+      where: { productId: id },
+    });
+
+    await prisma.cartItem.deleteMany({
+      where: { productId: id },
+    });
+
+    await prisma.rating.deleteMany({
+      where: { productId: id },
+    });
+
     await prisma.product.delete({
       where: { id },
     });

@@ -17,6 +17,8 @@ export async function addToCart(formData: FormData) {
     const rawData = {
         productId: formData.get('productId'),
         quantity: Number(formData.get('quantity')),
+        color: formData.get('color')?.toString(),
+        size: formData.get('size')?.toString(),
     };
 
     const validatedFields = AddToCartSchema.safeParse(rawData);
@@ -25,7 +27,7 @@ export async function addToCart(formData: FormData) {
         redirect('/products/' + rawData.productId + '?error=invalid_fields');
     }
 
-    const { productId, quantity } = validatedFields.data;
+    const { productId, quantity, color, size } = validatedFields.data;
 
     const userId = session.user.id;
 
@@ -45,6 +47,8 @@ export async function addToCart(formData: FormData) {
         where: {
             cartId: cart.id,
             productId,
+            color,
+            size,
         },
     });
 
@@ -59,6 +63,8 @@ export async function addToCart(formData: FormData) {
                 cartId: cart.id,
                 productId,
                 quantity,
+                color,
+                size,
             },
         });
     }

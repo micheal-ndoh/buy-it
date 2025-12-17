@@ -7,7 +7,7 @@ import { OrderStatusUpdate } from "@/components/OrderStatusUpdate";
 import { Prisma } from "@prisma/client";
 
 interface AdminOrdersPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function AdminOrdersPage({
@@ -19,12 +19,14 @@ export default async function AdminOrdersPage({
     redirect("/");
   }
 
+  const params = await searchParams;
+
   // Get filter parameters
   const statusFilter =
-    typeof searchParams.status === "string" ? searchParams.status : "all";
+    typeof params.status === "string" ? params.status : "all";
   const fromDate =
-    typeof searchParams.from === "string" ? searchParams.from : "";
-  const toDate = typeof searchParams.to === "string" ? searchParams.to : "";
+    typeof params.from === "string" ? params.from : "";
+  const toDate = typeof params.to === "string" ? params.to : "";
 
   // Build where clause for filtering
   const where: Prisma.OrderWhereInput = {};
