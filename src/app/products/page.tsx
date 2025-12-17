@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SortSelect } from "@/components/SortSelect";
 import { Pagination } from "@/components/Pagination";
 import { ProductSearch } from "@/components/ProductSearch";
-import { ProductFilters } from '@/components/ProductFilters';
+import { ProductFilters } from "@/components/ProductFilters";
 
 export default async function ProductsPage({
   searchParams,
@@ -15,9 +15,32 @@ export default async function ProductsPage({
   const search = typeof params.search === "string" ? params.search : undefined;
   const sort = typeof params.sort === "string" ? params.sort : "newest";
   const page = typeof params.page === "string" ? parseInt(params.page) : 1;
-  const minPrice = typeof params.minPrice === "string" ? parseFloat(params.minPrice) : undefined;
-  const maxPrice = typeof params.maxPrice === "string" ? parseFloat(params.maxPrice) : undefined;
-  const category = typeof params.category === "string" ? params.category : undefined;
+  const minPrice =
+    typeof params.minPrice === "string"
+      ? parseFloat(params.minPrice)
+      : undefined;
+  const maxPrice =
+    typeof params.maxPrice === "string"
+      ? parseFloat(params.maxPrice)
+      : undefined;
+  const category =
+    typeof params.category === "string" ? params.category : undefined;
+  const showFilters =
+    typeof params.showFilters === "string"
+      ? params.showFilters === "true"
+      : false;
+
+  const currentParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => currentParams.append(key, v));
+    } else if (value !== undefined && value !== null) {
+      currentParams.set(key, value as string);
+    }
+  });
+  const newParams = new URLSearchParams(currentParams);
+  newParams.set("showFilters", showFilters ? "false" : "true");
+  const toggleUrl = `?${newParams.toString()}`;
 
   const ITEMS_PER_PAGE = 20;
 
@@ -41,12 +64,12 @@ export default async function ProductsPage({
 
   // Build where clause for filtering
   const where: any = {};
-  
+
   // Add search filter
   if (search) {
     where.name = {
       contains: search,
-      mode: 'insensitive',
+      mode: "insensitive",
     };
   }
 
@@ -89,9 +112,11 @@ export default async function ProductsPage({
     select: {
       category: true,
     },
-    distinct: ['category' as const],
+    distinct: ["category" as const],
   });
-  const categoryList = categories.map(c => c.category).filter(Boolean) as string[];
+  const categoryList = categories
+    .map((c) => c.category)
+    .filter(Boolean) as string[];
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-background">
@@ -114,16 +139,35 @@ export default async function ProductsPage({
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* SideNavBar / Filters */}
-          <aside className="lg:col-span-1">
-            <ProductFilters minPriceValue={minPriceValue} maxPriceValue={maxPriceValue} categories={categoryList} />
+          <aside
+            className={`${showFilters ? "block" : "hidden"} lg:col-span-1`}
+          >
+            <ProductFilters
+              minPriceValue={minPriceValue}
+              maxPriceValue={maxPriceValue}
+              categories={categoryList}
+            />
           </aside>
 
           {/* Main Content / Product Grid */}
-          <div className="lg:col-span-3">
+          <div
+            className={`lg:col-span-3 ${!showFilters ? "lg:col-span-4" : ""}`}
+          >
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold text-text-light-primary dark:text-text-dark-primary mb-4 sm:mb-0">
-                All Products
-              </h1>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4 sm:mb-0">
+                <Link
+                  href={toggleUrl}
+                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-lg">
+                    filter_list
+                  </span>
+                  {showFilters ? "Hide Filters" : "Filters"}
+                </Link>
+                <h1 className="text-2xl sm:text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">
+                  All Products
+                </h1>
+              </div>
               <SortSelect
                 currentSort={sort}
                 searchQuery={search}
