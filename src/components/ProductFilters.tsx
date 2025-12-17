@@ -88,10 +88,10 @@ export function ProductFilters({ minPriceValue, maxPriceValue, categories }: Pro
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              ${minPrice}
+              Min: ${minPrice}
             </span>
             <span className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-              ${maxPrice}
+              Max: ${maxPrice}
             </span>
           </div>
           <div className="flex flex-col gap-2">

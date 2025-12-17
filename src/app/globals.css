@@ -91,3 +91,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Fix select dropdown options in dark mode */
+.dark select option {
+  background-color: #0a0a0a;
+  color: #ededed;
+}
