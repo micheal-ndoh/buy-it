@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { addToCart } from "./actions";
-import { ProductRating } from "@/components/ProductRating";
-import { ProductImageGallery } from "@/components/ProductImageGallery";
-import { ProductDetailSkeleton } from "@/components/SkeletonLoader";
+import { ProductColorSelector } from "@/components/ProductColorSelector";
 import { Suspense } from "react";
+import { ProductDetailSkeleton } from "@/components/SkeletonLoader";
+import { ProductImageGallery } from "@/components/ProductImageGallery";
+import { ProductRating } from "@/components/ProductRating";
 
 async function ProductContent({ id }: { id: string }) {
   const product = await prisma.product.findUnique({
@@ -79,7 +80,9 @@ async function ProductContent({ id }: { id: string }) {
           {/* Available Colors */}
           {product.colors && product.colors.length > 0 && (
             <div className="flex flex-col gap-3">
-              <h3 className="text-lg font-semibold text-black dark:text-white">Available Colors</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-white">
+                Available Colors
+              </h3>
               <div className="flex flex-wrap gap-3">
                 {product.colors.map((color, index) => (
                   <div
@@ -89,11 +92,15 @@ async function ProductContent({ id }: { id: string }) {
                     <div
                       className="w-5 h-5 rounded-full border border-gray-300"
                       style={{
-                        backgroundColor: color.startsWith('#') ? color : undefined,
-                        background: !color.startsWith('#') ? color : undefined
+                        backgroundColor: color.startsWith("#")
+                          ? color
+                          : undefined,
+                        background: !color.startsWith("#") ? color : undefined,
                       }}
                     />
-                    <span className="text-sm font-medium text-black dark:text-white">{color}</span>
+                    <span className="text-sm font-medium text-black dark:text-white">
+                      {color}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -103,6 +110,14 @@ async function ProductContent({ id }: { id: string }) {
           <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-6">
             <form action={addToCart}>
               <input type="hidden" name="productId" value={product.id} />
+
+              {/* Variant Selector: Color */}
+              {product.colors && product.colors.length > 0 && (
+                <ProductColorSelector
+                  colors={product.colors}
+                  selectedColor={product.colors[0]} // Default to first color
+                />
+              )}
 
               {/* Variant Selector: Size (Static for now) */}
               <div className="mb-6">
@@ -123,7 +138,10 @@ async function ProductContent({ id }: { id: string }) {
                   <option>L</option>
                   <option>XL</option>
                 </select>
-                <p id="size-help" className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p
+                  id="size-help"
+                  className="text-sm text-gray-600 dark:text-gray-400 mt-1"
+                >
                   Select your preferred size
                 </p>
               </div>
